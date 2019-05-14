@@ -1,0 +1,26 @@
+﻿<Properties StartupConfiguration="{E71E3A79-8085-4BCD-B027-8199E06E1D4D}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="DefaultQARepo.cs">
+    <Files>
+      <File FileName="DefaultQARepo.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="leaderboardapp" expanded="True">
+            <Node name="leaderboardapp" expanded="True">
+              <Node name="Dependencies" expanded="True" />
+              <Node name="DefaultQARepo.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.leaderboardapp PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

@@ -1,0 +1,209 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="app">
+    <div class="callout primary">
+        <div class="row column">
+            <h1>Play Game</h1>
+            <div>
+                <input type="text" ref="name" v-model="username" placeholder="Enter name" autofocus />
+            </div>
+        </div>
+    </div>
+    <div class="row small-up-1 medium-up-2 large-up-2">
+        <div class="column" v-if="!hasName()">
+            <h3>Please enter name to start</h3>
+        </div>
+        <div class="column" v-if="hasName()">
+            <div data-closable="fade-out" class="todo-list-card card">
+                <div class="card-divider">
+                    <h4 v-text="message"></h4>
+                </div>
+                <div class="card-section">
+                    <ul class="card-question-group">
+                        <li v-for="(item, index) in questions"><input v-bind:id="'q_' + index" v-model="item.selected" type="checkbox" /><label v-bind:for="'q_' + index"></label>{{item.question}}</li>
+                    </ul>
+                </div>
+                <div class="button-group expanded">
+                    <button type="button" class="success button" v-on:click="submit">Submit</button>
+                    <button type="button" class="button" v-on:click="skip">Skip</button>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h3>
+                <span v-text="leaderboardTitle"></span>
+                <span v-if="hasName()">| <a href="javascript:void(0)" v-on:click="toggle">Toggle</a></span>
+            </h3>
+            <hr />
+            <table class="responsive-card-table unstriped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Username</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in leaderboard">
+                        <td v-text="item.rank+1"></td>
+                        <td data-label="Username" v-text="getUsernameWithAnnotation(item.playerName)"></td>
+                        <td data-label="Score" v-text="item.score"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts  {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Go!',
+            questions: [],
+            username: '',
+            leaderboard: [],
+            centered: false
+        },
+        computed: {
+            leaderboardTitle: function () {
+                var prefix = "Top";
+                if (this.centered) {
+                    prefix = "Centered";
+                }
+
+                return prefix + " Leaderboard";
+            }
+        },
+        watch: {
+            username: function (newUsername, oldUsername) {
+                if (!newUsername) {
+                    this.centered = false;
+                    this.fetchLeaderboard();
+                } else {
+                    if (this.centered && newUsername != oldUsername) {
+                        this.fetchLeaderboard();
+                    }
+                }
+            }
+        },
+        async created() {
+            if (!this.hasName()) {
+                this.$nextTick(() => this.$refs.name.focus())
+            }
+
+            var lbPromise = this.fetchLeaderboard();
+            var qPromise = this.fetchQuestions();
+
+            this.questions = await qPromise;
+            await lbPromise;
+        },
+        methods: {
+            fetchQuestions: async () => {
+                try {
+                    var getUrl = "/api/qa";
+                    const response = await axios.get(getUrl);
+                    return response.data;
+                } catch (error) {
+                    console.error(error);
+                    return [];
+                }
+            },
+            fetchLeaderboard: function () {
+                var pThis = this;
+                var getUrl = "api/score/retrievescores";
+
+                (async () => {
+                    try {
+                        var params = {
+                            centerKey: '',
+                            offset: 0,
+                            numScores: 10
+                        };
+
+                        if (pThis.centered) {
+                            params.centerKey = pThis.username;
+                            params.offset = -2;
+                        }
+
+                        const response = await axios.get(getUrl, { params: params });
+                        pThis.leaderboard = response.data;
+                    } catch (error) {
+                        console.error(error);
+                        return []
+                    }
+                })();
+            },
+            getUsernameWithAnnotation: function (username) {
+                if (this.centered) {
+                    if (this.username == username) {
+                        return username + "*";
+                    }
+                }
+
+                return username;
+            },
+            toggle: function () {
+                this.centered = !this.centered;
+                this.fetchLeaderboard();
+            },
+            submit: function () {
+                var scoreInfo = {
+                    playerName: this.username,
+                    score: this.calculateScore().toFixed(2)
+                };
+
+                var pThis = this;
+
+                var postUrl = "/api/score";
+                (async () => {
+                    try {
+                        await axios.post(postUrl, scoreInfo)
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    var lbPromise = pThis.fetchLeaderboard();
+                    var qPromise = pThis.fetchQuestions();
+
+                    pThis.questions = await qPromise;
+                    await lbPromise;
+                })();
+            },
+            skip: function () {
+                var pThis = this;
+
+                (async () => pThis.questions = await pThis.fetchQuestions())();
+            },
+            calculateScore: function () {
+                var score = 0.0;
+                var numberCorrect = 0;
+                var i = 0;
+                if (this.questions && this.questions.length > 0) {
+                    for (i = 0; i < this.questions.length; i++) {
+                        if (this.questions[i].selected === this.questions[i].isCorrect) {
+                            numberCorrect += 1;
+                        }
+                    }
+                }
+
+                score = numberCorrect / this.questions.length * 100;
+
+                return score;
+            },
+            hasName: function () {
+                if (this.username) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    });
+</script>
+}

@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game</title>
+
+    <link rel="stylesheet" href="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.min.css">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="@Url.Content("~/css/site.css")" asp-append-version="true" />
+</head>
+<body>
+    <div class="off-canvas-wrapper">
+        <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+            <div class="off-canvas position-left reveal-for-large" id="my-info" data-off-canvas data-position="left">
+                <div class="row column">
+                    <br>
+                </div>
+            </div>
+            <div class="off-canvas-content" data-off-canvas-content>
+                <div class="title-bar hide-for-large">
+                    <div class="title-bar-left">
+                        <button class="menu-icon" type="button" data-open="my-info"></button>
+                        <span class="title-bar-title">Play game!</span>
+                    </div>
+                </div>
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+    <script>
+        $(document).foundation();
+    </script>
+</body>
+</html>
