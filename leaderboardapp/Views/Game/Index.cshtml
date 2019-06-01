@@ -115,6 +115,7 @@
                 }
             },
             fetchLeaderboard: function () {
+                // [START FETCHSCORES_CLIENT]
                 var pThis = this;
                 var getUrl = "api/score/retrievescores";
 
@@ -138,6 +139,7 @@
                         return []
                     }
                 })();
+                // [END FETCHSCORES_CLIENT]
             },
             getUsernameWithAnnotation: function (username) {
                 if (this.centered) {
@@ -153,6 +155,7 @@
                 this.fetchLeaderboard();
             },
             submit: function () {
+                // [START POSTSCORE_CLIENT]
                 var scoreInfo = {
                     playerName: this.username,
                     score: this.calculateScore().toFixed(2)
@@ -174,6 +177,7 @@
                     pThis.questions = await qPromise;
                     await lbPromise;
                 })();
+                // [END POSTSCORE_CLIENT]
             },
             skip: function () {
                 var pThis = this;

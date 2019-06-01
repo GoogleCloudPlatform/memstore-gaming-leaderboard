@@ -1,4 +1,4 @@
-# Leaderboard application
+# Gaming leaderboard application
 
 This is the source code for the Cloud Memorystore for Redis based leaderboard application that accompanies the solution: [solution name]. The application is built using ASP.NET Core and consists of a simple Web API for posting and retrieves scores. The Web API is implemented using [Cloud Memorystore for Redis](https://cloud.google.com/memorystore/), which is a fully managed Redis service available through Google Cloud Platform (GCP).
 

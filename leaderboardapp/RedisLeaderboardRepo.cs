@@ -33,6 +33,12 @@ namespace leaderboardapp
             _redis = ConnectionMultiplexer.Connect(GetRedisHost());
         }
 
+        /// <summary>
+        /// RetrieveScoresAsync
+        /// </summary>
+        /// <param name="retrievalDetails"></param>
+        /// <returns></returns>
+        // [START FETCHSCORES_SERVER]
         public async Task<IList<LeaderboardItemModel>> RetrieveScoresAsync(RetrieveScoresDetails retrievalDetails)
         {
             IDatabase db = _redis.GetDatabase();
@@ -76,7 +82,14 @@ namespace leaderboardapp
 
             return leaderboard;
         }
+        // [END FETCHSCORES_SERVER]
 
+        /// <summary>
+        /// PostScoreAsync
+        /// </summary>
+        /// <param name="score"></param>
+        /// <returns></returns>
+        // [START POSTSCORE_SERVER]
         public async Task<bool> PostScoreAsync(ScoreModel score)
         {
             IDatabase db = _redis.GetDatabase();
@@ -84,6 +97,7 @@ namespace leaderboardapp
             // SortedSetAddAsync corresponds to ZADD
             return await db.SortedSetAddAsync(LEADERBOARD_KEY, score.PlayerName, score.Score);
         }
+        // [END POSTSCORE_SERVER]
 
         private string GetRedisHost()
         {
