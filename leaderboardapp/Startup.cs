@@ -54,7 +54,10 @@ namespace leaderboardapp
 
             app.UseStaticFiles();
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("default", "{controller=Home}/{action=Index}");
+            });
         }
     }
 }

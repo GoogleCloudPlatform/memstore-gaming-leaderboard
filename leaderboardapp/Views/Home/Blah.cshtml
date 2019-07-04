@@ -1,44 +1,45 @@
 ﻿@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Blah";
+    Layout = "~/Views/Shared/_BootstrapLayout.cshtml";
 }
 
-<div id="app">
-    <div class="callout primary">
-        <div class="row column">
-            <h1>Play Game</h1>
-            <div>
-                <input type="text" ref="name" v-model="username" placeholder="Enter name" autofocus />
+<div id="app" class="container-fluid">
+    <div>
+        <h3 class="subdued">Username:&nbsp;<span class="text-success" v-html="username"></span></h3>
+        <div>
+            <input class="form-control" type="text" ref="name" v-model="username" placeholder="Enter username to play" autofocus />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" v-if="hasName()">
+            <div class="card">
+                <div class="card-header">
+                    </span><h4 v-text="message"></h4>
+                </div>
+                <ul class="list-group list-group-flush question-group" style="margin-left: 10px;">
+                    <li v-for="(item, index) in questions" class="list-group-item">
+                        <input class="form-check-input" v-bind:id="'q_' + index" v-model="item.selected" type="checkbox" />
+                        <label v-bind:for="'q_' + index"></label>{{item.question}}
+                    </li>
+                </ul>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success" v-on:click="submit">Submit</button>
+                    <button type="button" class="btn btn-secondary" v-on:click="skip">Skip</button>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row small-up-1 medium-up-2 large-up-2">
-        <div class="column" v-if="!hasName()">
-            <h3>Please enter name to start</h3>
-        </div>
-        <div class="column" v-if="hasName()">
-            <div data-closable="fade-out" class="todo-list-card card">
-                <div class="card-divider">
-                    <h4 v-text="message"></h4>
-                </div>
-                <div class="card-section">
-                    <ul class="card-question-group">
-                        <li v-for="(item, index) in questions"><input v-bind:id="'q_' + index" v-model="item.selected" type="checkbox" /><label v-bind:for="'q_' + index"></label>{{item.question}}</li>
-                    </ul>
-                </div>
-                <div class="button-group expanded">
-                    <button type="button" class="success button" v-on:click="submit">Submit</button>
-                    <button type="button" class="button" v-on:click="skip">Skip</button>
-                </div>
-            </div>
-        </div>
-        <div class="column">
-            <h3>
-                <span v-text="leaderboardTitle"></span>
-                <span v-if="hasName()">| <a href="javascript:void(0)" v-on:click="toggle">Toggle</a></span>
-            </h3>
-            <hr />
-            <table class="responsive-card-table unstriped">
+    <div class="row" style="margin-top: 20px; margin-left: 5px;">
+        <div class="col">
+            <ul class="nav nav-pills nav-fill">
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="top10BtnClass" v-on:click="undoCentered" href="javascript:void(0)">Top 11</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="centeredBtnClass" href="javascript:void(0)" v-on:click="doCentered">Centered +/-5</a>
+                </li>
+            </ul>
+            <table class="table">
                 <thead>
                     <tr>
                         <th></th>
@@ -64,20 +65,22 @@
     var app = new Vue({
         el: '#app',
         data: {
-            message: 'Go!',
+            message: 'Select correct choices:',
             questions: [],
             username: '',
             leaderboard: [],
             centered: false
         },
         computed: {
-            leaderboardTitle: function () {
-                var prefix = "Top";
-                if (this.centered) {
-                    prefix = "Centered";
+            centeredBtnClass: function () {
+                if (!this.hasName()) {
+                    return 'disabled';
                 }
 
-                return prefix + " Leaderboard";
+                return this.centered ? 'active' : '';
+            },
+            top10BtnClass: function () {
+                return this.centered ? '' : 'active';
             }
         },
         watch: {
@@ -117,19 +120,20 @@
             fetchLeaderboard: function () {
                 // [START FETCHSCORES_CLIENT]
                 var pThis = this;
-                var getUrl = "api/score/retrievescores";
+                var getUrl = "/api/score/retrievescores";
 
                 (async () => {
                     try {
                         var params = {
                             centerKey: '',
                             offset: 0,
-                            numScores: 10
+                            numScores: 11
                         };
 
                         if (pThis.centered) {
                             params.centerKey = pThis.username;
-                            params.offset = -2;
+                            params.offset = -5;
+                            params.numScores = 11;
                         }
 
                         const response = await axios.get(getUrl, { params: params });
@@ -150,8 +154,12 @@
 
                 return username;
             },
-            toggle: function () {
-                this.centered = !this.centered;
+            doCentered: function () {
+                this.centered = true;
+                this.fetchLeaderboard();
+            },
+            undoCentered: function () {
+                this.centered = false;
                 this.fetchLeaderboard();
             },
             submit: function () {

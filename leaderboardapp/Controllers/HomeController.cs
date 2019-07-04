@@ -19,9 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace leaderboardapp.Controllers
 {
-    [Route("[controller]")]
     [Controller]
-    public class GameController : Controller
+    public class HomeController : Controller
     {
         public IActionResult Index()
         {

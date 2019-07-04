@@ -80,6 +80,15 @@
     font-weight: bold;
 }
 
+.question-group {
+    font-family: Courier New, Courier, monospace;
+    font-weight: bold;
+}
+
+.subdued {
+    color: #aaa;
+}
+
 .responsive-card-table {
     border-collapse: collapse;
 }
