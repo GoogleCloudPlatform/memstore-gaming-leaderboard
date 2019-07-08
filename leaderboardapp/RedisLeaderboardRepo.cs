@@ -45,6 +45,7 @@ namespace leaderboardapp
             List<LeaderboardItemModel> leaderboard = new List<LeaderboardItemModel>();
 
             long offset = retrievalDetails.Offset;
+            long numScores = retrievalDetails.NumScores;
 
             // If centered, get rank of specified user first
             if (!string.IsNullOrWhiteSpace(retrievalDetails.CenterKey))
@@ -60,12 +61,19 @@ namespace leaderboardapp
 
                 // Use rank to calculate offset
                 offset = Math.Max(0, rank.Value + retrievalDetails.Offset);
+
+                // Account for number of scores when we're attempting to center
+                // at element in rank [0, abs(offset))
+                if(offset <= 0)
+                {
+                    numScores = rank.Value + Math.Abs((long)retrievalDetails.Offset) + 1;
+                }
             }
 
             // SortedSetRangeByScoreWithScoresAsync corresponds to ZREVRANGEBYSCORE [WITHSCORES]
             var scores = await db.SortedSetRangeByScoreWithScoresAsync(LEADERBOARD_KEY,
                 skip: offset,
-                take: retrievalDetails.NumScores,
+                take: numScores,
                 order: Order.Descending);
 
             var startingRank = offset;
