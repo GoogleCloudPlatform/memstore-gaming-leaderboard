@@ -42,6 +42,7 @@ And then deploy using `kubectl`:
 
 ```bash
 kubectl create -f appdeploy.yaml
+kubectl create -f gamingservice.yaml
 ```
 
 Once the application and service have been deployed, the ingress component needs to be configured. With GKE, ingress is provided by the GCP HTTP(s) load balancer as described in [HTTP(s) load balancing with Ingress](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress). To deploy ingress, use `kubectl` again:

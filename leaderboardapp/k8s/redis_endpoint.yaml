@@ -17,6 +17,6 @@ metadata:
  name: redis
 subsets:
  - addresses:
-     - ip: 10.0.0.12
+     - ip: REDIS_IP
    ports:
      - port: 6379
