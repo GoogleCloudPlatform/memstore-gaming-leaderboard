@@ -31,12 +31,14 @@ namespace leaderboardapp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddTransient<IQuestionAnswerRepository, DefaultQARepo>();
 
             // contains thread-safe state (ConnectionMultiplexer)
             services.AddSingleton<ILeaderboardRepository, RedisLeaderboardRepo>();
+
+            services.AddControllers(options => options.EnableEndpointRouting = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
